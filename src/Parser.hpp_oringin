@@ -1,0 +1,400 @@
+#ifndef PARSER_HPP
+#define PARSER_HPP
+
+#include "Symbol.hpp"
+#include "State.hpp"
+
+// 获取动作(下一个输入为终结符号时)
+ParserAction getParserAction(State currentState, Terminal nextSymbol) {
+    switch (currentState) {
+    case S0:
+        // State 0: $default reduce using rule 2
+        return {ParserAction::REDUCE, 2};
+    case S1:
+        // State 1: $end shift, and go to state 3
+        if (nextSymbol == eof) return {ParserAction::SHIFT, 3};
+        return {ParserAction::ERROR, -1};
+    case S2:
+        // State 2: 多种shift
+        if (nextSymbol == ARRAY) return {ParserAction::SHIFT, 4};
+        if (nextSymbol == ID) return {ParserAction::SHIFT, 5};
+        if (nextSymbol == IF) return {ParserAction::SHIFT, 6};
+        if (nextSymbol == REPEAT) return {ParserAction::SHIFT, 7};
+        if (nextSymbol == READ) return {ParserAction::SHIFT, 8};
+        if (nextSymbol == WRITE) return {ParserAction::SHIFT, 9};
+        return {ParserAction::ERROR, -1};
+    case S3:
+        // State 3: Accept
+        return {ParserAction::ACCEPT, -1};
+    case S4:
+        if (nextSymbol == ID) return {ParserAction::SHIFT, 19};
+        return {ParserAction::ERROR, -1};
+    case S5: return {ParserAction::REDUCE, 32};
+    case S6:
+        if (nextSymbol == ID) return {ParserAction::SHIFT, 5};
+        if (nextSymbol == NUM) return {ParserAction::SHIFT, 21};
+        if (nextSymbol == LPAREN) return {ParserAction::SHIFT, 22};
+        return {ParserAction::ERROR, -1};
+    case S7:
+        if (nextSymbol == ID) return {ParserAction::SHIFT, 5};
+        if (nextSymbol == IF) return {ParserAction::SHIFT, 6};
+        if (nextSymbol == REPEAT) return {ParserAction::SHIFT, 7};
+        if (nextSymbol == READ) return {ParserAction::SHIFT, 8};
+        if (nextSymbol == WRITE) return {ParserAction::SHIFT, 9};
+        return {ParserAction::ERROR, -1};
+    case S8:
+        if (nextSymbol == ID) return {ParserAction::SHIFT, 5};
+        return {ParserAction::ERROR, -1};
+    case S9:
+        if (nextSymbol == ID) return {ParserAction::SHIFT, 5};
+        if (nextSymbol == NUM) return {ParserAction::SHIFT, 21};
+        if (nextSymbol == LPAREN) return {ParserAction::SHIFT, 22};
+        return {ParserAction::ERROR, -1};
+    case S10: return {ParserAction::REDUCE, 3};
+    case S11:
+        if (nextSymbol == SEMI) return {ParserAction::SHIFT, 31};
+        return {ParserAction::REDUCE, 1};
+    case S12: return {ParserAction::REDUCE, 8};
+    case S13: return {ParserAction::REDUCE, 9};
+    case S14: return {ParserAction::REDUCE, 10};
+    case S15: return {ParserAction::REDUCE, 11};
+    case S16: return {ParserAction::REDUCE, 12};
+    case S17: return {ParserAction::REDUCE, 13};
+    case S18:
+        if (nextSymbol == ASSIGN) return {ParserAction::SHIFT, 32};
+        return {ParserAction::ERROR, -1};
+    case S19:
+        if (nextSymbol == LBRACKET) return {ParserAction::SHIFT, 33};
+        return {ParserAction::ERROR, -1};
+    case S20:
+        if (nextSymbol == LBRACKET) return {ParserAction::SHIFT, 35};
+        return {ParserAction::REDUCE, 31};
+    case S21: return {ParserAction::REDUCE, 29};
+    case S22:
+        if (nextSymbol == ID) return {ParserAction::SHIFT, 5};
+        if (nextSymbol == NUM) return {ParserAction::SHIFT, 21};
+        if (nextSymbol == LPAREN) return {ParserAction::SHIFT, 22};
+        return {ParserAction::ERROR, -1};
+    case S23:
+        if (nextSymbol == THEN) return {ParserAction::SHIFT, 37};
+        return {ParserAction::ERROR, -1};
+    case S24:
+        if (nextSymbol == RELOP) return {ParserAction::SHIFT, 38};
+        if (nextSymbol == PLUS) return {ParserAction::SHIFT, 39};
+        if (nextSymbol == MINUS) return {ParserAction::SHIFT, 40};
+        return {ParserAction::REDUCE, 21};
+    case S25:
+        if (nextSymbol == TIMES) return {ParserAction::SHIFT, 41};
+        if (nextSymbol == OVER) return {ParserAction::SHIFT, 42};
+        return {ParserAction::REDUCE, 24};
+    case S26: return {ParserAction::REDUCE, 27};
+    case S27: return {ParserAction::REDUCE, 30};
+    case S28:
+        if (nextSymbol == SEMI) return {ParserAction::SHIFT, 31};
+        if (nextSymbol == UNTIL) return {ParserAction::SHIFT, 43};
+        return {ParserAction::ERROR, -1};
+    case S29: return {ParserAction::REDUCE, 18};
+    case S30: return {ParserAction::REDUCE, 19};
+    case S31:
+        if (nextSymbol == ID) return {ParserAction::SHIFT, 5};
+        if (nextSymbol == IF) return {ParserAction::SHIFT, 6};
+        if (nextSymbol == REPEAT) return {ParserAction::SHIFT, 7};
+        if (nextSymbol == READ) return {ParserAction::SHIFT, 8};
+        if (nextSymbol == WRITE) return {ParserAction::SHIFT, 9};
+        return {ParserAction::ERROR, -1};
+    case S32:
+        if (nextSymbol == ID) return {ParserAction::SHIFT, 5};
+        if (nextSymbol == NUM) return {ParserAction::SHIFT, 21};
+        if (nextSymbol == LPAREN) return {ParserAction::SHIFT, 22};
+        return {ParserAction::ERROR, -1};
+    case S33:
+        if (nextSymbol == NUM) return {ParserAction::SHIFT, 46};
+        return {ParserAction::ERROR, -1};
+    case S34:
+        if (nextSymbol == SEMI) return {ParserAction::SHIFT, 47};
+        if (nextSymbol == LBRACKET) return {ParserAction::SHIFT, 48};
+        return {ParserAction::ERROR, -1};
+    case S35:
+        if (nextSymbol == ID) return {ParserAction::SHIFT, 5};
+        if (nextSymbol == NUM) return {ParserAction::SHIFT, 21};
+        if (nextSymbol == LPAREN) return {ParserAction::SHIFT, 22};
+        return {ParserAction::ERROR, -1};
+    case S36:
+        if (nextSymbol == RPAREN) return {ParserAction::SHIFT, 50};
+        return {ParserAction::ERROR, -1};
+    case S37:
+        if (nextSymbol == ID) return {ParserAction::SHIFT, 5};
+        if (nextSymbol == IF) return {ParserAction::SHIFT, 6};
+        if (nextSymbol == REPEAT) return {ParserAction::SHIFT, 7};
+        if (nextSymbol == READ) return {ParserAction::SHIFT, 8};
+        if (nextSymbol == WRITE) return {ParserAction::SHIFT, 9};
+        return {ParserAction::ERROR, -1};
+    case S38:
+        if (nextSymbol == ID) return {ParserAction::SHIFT, 5};
+        if (nextSymbol == NUM) return {ParserAction::SHIFT, 21};
+        if (nextSymbol == LPAREN) return {ParserAction::SHIFT, 22};
+        return {ParserAction::ERROR, -1};
+    case S39:
+        if (nextSymbol == ID) return {ParserAction::SHIFT, 5};
+        if (nextSymbol == NUM) return {ParserAction::SHIFT, 21};
+        if (nextSymbol == LPAREN) return {ParserAction::SHIFT, 22};
+        return {ParserAction::ERROR, -1};
+    case S40:
+        if (nextSymbol == ID) return {ParserAction::SHIFT, 5};
+        if (nextSymbol == NUM) return {ParserAction::SHIFT, 21};
+        if (nextSymbol == LPAREN) return {ParserAction::SHIFT, 22};
+        return {ParserAction::ERROR, -1};
+    case S41:
+        if (nextSymbol == ID) return {ParserAction::SHIFT, 5};
+        if (nextSymbol == NUM) return {ParserAction::SHIFT, 21};
+        if (nextSymbol == LPAREN) return {ParserAction::SHIFT, 22};
+        return {ParserAction::ERROR, -1};
+    case S42:
+        if (nextSymbol == ID) return {ParserAction::SHIFT, 5};
+        if (nextSymbol == NUM) return {ParserAction::SHIFT, 21};
+        if (nextSymbol == LPAREN) return {ParserAction::SHIFT, 22};
+        return {ParserAction::ERROR, -1};
+    case S43:
+        if (nextSymbol == ID) return {ParserAction::SHIFT, 5};
+        if (nextSymbol == NUM) return {ParserAction::SHIFT, 21};
+        if (nextSymbol == LPAREN) return {ParserAction::SHIFT, 22};
+        return {ParserAction::ERROR, -1};
+    case S44: return {ParserAction::REDUCE, 7};
+    case S45: return {ParserAction::REDUCE, 17};
+    case S46:
+        if (nextSymbol == RBRACKET) return {ParserAction::SHIFT, 58};
+        return {ParserAction::ERROR, -1};
+    case S47: return {ParserAction::REDUCE, 4};
+    case S48:
+        if (nextSymbol == NUM) return {ParserAction::SHIFT, 59};
+        return {ParserAction::ERROR, -1};
+    case S49:
+        if (nextSymbol == RBRACKET) return {ParserAction::SHIFT, 60};
+        return {ParserAction::ERROR, -1};
+    case S50: return {ParserAction::REDUCE, 28};
+    case S51:
+        if (nextSymbol == SEMI) return {ParserAction::SHIFT, 31};
+        if (nextSymbol == END) return {ParserAction::SHIFT, 61};
+        if (nextSymbol == ELSE) return {ParserAction::SHIFT, 62};
+        return {ParserAction::ERROR, -1};
+    case S52:
+        if (nextSymbol == PLUS) return {ParserAction::SHIFT, 39};
+        if (nextSymbol == MINUS) return {ParserAction::SHIFT, 40};
+        return {ParserAction::REDUCE, 20};
+    case S53:
+        if (nextSymbol == TIMES) return {ParserAction::SHIFT, 41};
+        if (nextSymbol == OVER) return {ParserAction::SHIFT, 42};
+        return {ParserAction::REDUCE, 22};
+    case S54:
+        if (nextSymbol == TIMES) return {ParserAction::SHIFT, 41};
+        if (nextSymbol == OVER) return {ParserAction::SHIFT, 42};
+        return {ParserAction::REDUCE, 23};
+    case S55: return {ParserAction::REDUCE, 25};
+    case S56: return {ParserAction::REDUCE, 26};
+    case S57: return {ParserAction::REDUCE, 16};
+    case S58: return {ParserAction::REDUCE, 6};
+    case S59:
+        if (nextSymbol == RBRACKET) return {ParserAction::SHIFT, 63};
+        return {ParserAction::ERROR, -1};
+    case S60: return {ParserAction::REDUCE, 33};
+    case S61: return {ParserAction::REDUCE, 14};
+    case S62:
+        if (nextSymbol == ID) return {ParserAction::SHIFT, 5};
+        if (nextSymbol == IF) return {ParserAction::SHIFT, 6};
+        if (nextSymbol == REPEAT) return {ParserAction::SHIFT, 7};
+        if (nextSymbol == READ) return {ParserAction::SHIFT, 8};
+        if (nextSymbol == WRITE) return {ParserAction::SHIFT, 9};
+        return {ParserAction::ERROR, -1};
+    case S63: return {ParserAction::REDUCE, 5};
+    case S64:
+        if (nextSymbol == SEMI) return {ParserAction::SHIFT, 31};
+        if (nextSymbol == END) return {ParserAction::SHIFT, 65};
+        return {ParserAction::ERROR, -1};
+    case S65: return {ParserAction::REDUCE, 15};
+    }
+}
+
+// 获取跳转(下一个输入为非终结符号时)
+State getNextState(State currentState, NonTerminal nextSymbol) {
+    switch (currentState) {
+    case S0:
+        if (nextSymbol == PROGRAM) return S1;
+        if (nextSymbol == ARRAY_DECLS) return S2;
+        return S_error;
+    case S1: return S_error;
+    case S2:
+        if (nextSymbol == ARRAY_DECL) return S10;
+        if (nextSymbol == STMT_SEQUENCE) return S11;
+        if (nextSymbol == STATEMENT) return S12;
+        if (nextSymbol == IF_STMT) return S13;
+        if (nextSymbol == REPEAT_STMT) return S14;
+        if (nextSymbol == ASSIGN_STMT) return S15;
+        if (nextSymbol == READ_STMT) return S16;
+        if (nextSymbol == WRITE_STMT) return S17;
+        if (nextSymbol == VAR) return S18;
+        return S_error;
+    case S3: return S_error;
+    case S4: return S_error;
+    case S5:
+        if (nextSymbol == VAR_DIMS) return S20;
+        return S_error;
+    case S6:
+        if (nextSymbol == EXP) return S23;
+        if (nextSymbol == SIMPLE_EXP) return S24;
+        if (nextSymbol == TERM) return S25;
+        if (nextSymbol == FACTOR) return S26;
+        if (nextSymbol == VAR) return S27;
+        return S_error;
+    case S7:
+        if (nextSymbol == STMT_SEQUENCE) return S28;
+        if (nextSymbol == STATEMENT) return S12;
+        if (nextSymbol == IF_STMT) return S13;
+        if (nextSymbol == REPEAT_STMT) return S14;
+        if (nextSymbol == ASSIGN_STMT) return S15;
+        if (nextSymbol == READ_STMT) return S16;
+        if (nextSymbol == WRITE_STMT) return S17;
+        if (nextSymbol == VAR) return S18;
+        return S_error;
+    case S8:
+        if (nextSymbol == VAR) return S29;
+        return S_error;
+    case S9:
+        if (nextSymbol == EXP) return S30;
+        if (nextSymbol == SIMPLE_EXP) return S24;
+        if (nextSymbol == TERM) return S25;
+        if (nextSymbol == FACTOR) return S26;
+        if (nextSymbol == VAR) return S27;
+        return S_error;
+    case S10: return S_error;
+    case S11: return S_error;
+    case S12: return S_error;
+    case S13: return S_error;
+    case S14: return S_error;
+    case S15: return S_error;
+    case S16: return S_error;
+    case S17: return S_error;
+    case S18: return S_error;
+    case S19:
+        if (nextSymbol == DIMS) return S34;
+        return S_error;
+    case S20: return S_error;
+    case S21: return S_error;
+    case S22:
+        if (nextSymbol == EXP) return S36;
+        if (nextSymbol == SIMPLE_EXP) return S24;
+        if (nextSymbol == TERM) return S25;
+        if (nextSymbol == FACTOR) return S26;
+        if (nextSymbol == VAR) return S27;
+        return S_error;
+    case S23: return S_error;
+    case S24: return S_error;
+    case S25: return S_error;
+    case S26: return S_error;
+    case S27: return S_error;
+    case S28: return S_error;
+    case S29: return S_error;
+    case S30: return S_error;
+    case S31:
+        if (nextSymbol == STATEMENT) return S44;
+        if (nextSymbol == IF_STMT) return S13;
+        if (nextSymbol == REPEAT_STMT) return S14;
+        if (nextSymbol == ASSIGN_STMT) return S15;
+        if (nextSymbol == READ_STMT) return S16;
+        if (nextSymbol == WRITE_STMT) return S17;
+        if (nextSymbol == VAR) return S18;
+        return S_error;
+    case S32:
+        if (nextSymbol == EXP) return S45;
+        if (nextSymbol == SIMPLE_EXP) return S24;
+        if (nextSymbol == TERM) return S25;
+        if (nextSymbol == FACTOR) return S26;
+        if (nextSymbol == VAR) return S27;
+        return S_error;
+    case S33: return S_error;
+    case S34: return S_error;
+    case S35:
+        if (nextSymbol == EXP) return S49;
+        if (nextSymbol == SIMPLE_EXP) return S24;
+        if (nextSymbol == TERM) return S25;
+        if (nextSymbol == FACTOR) return S26;
+        if (nextSymbol == VAR) return S27;
+        return S_error;
+    case S36: return S_error;
+    case S37:
+        if (nextSymbol == STMT_SEQUENCE) return S51;
+        if (nextSymbol == STATEMENT) return S12;
+        if (nextSymbol == IF_STMT) return S13;
+        if (nextSymbol == REPEAT_STMT) return S14;
+        if (nextSymbol == ASSIGN_STMT) return S15;
+        if (nextSymbol == READ_STMT) return S16;
+        if (nextSymbol == WRITE_STMT) return S17;
+        if (nextSymbol == VAR) return S18;
+        return S_error;
+    case S38:
+        if (nextSymbol == SIMPLE_EXP) return S52;
+        if (nextSymbol == TERM) return S25;
+        if (nextSymbol == FACTOR) return S26;
+        if (nextSymbol == VAR) return S27;
+        return S_error;
+    case S39:
+        if (nextSymbol == TERM) return S53;
+        if (nextSymbol == FACTOR) return S26;
+        if (nextSymbol == VAR) return S27;
+        return S_error;
+    case S40:
+        if (nextSymbol == TERM) return S54;
+        if (nextSymbol == FACTOR) return S26;
+        if (nextSymbol == VAR) return S27;
+        return S_error;
+    case S41:
+        if (nextSymbol == FACTOR) return S55;
+        if (nextSymbol == VAR) return S27;
+        return S_error;
+    case S42:
+        if (nextSymbol == FACTOR) return S56;
+        if (nextSymbol == VAR) return S27;
+        return S_error;
+    case S43:
+        if (nextSymbol == EXP) return S57;
+        if (nextSymbol == SIMPLE_EXP) return S24;
+        if (nextSymbol == TERM) return S25;
+        if (nextSymbol == FACTOR) return S26;
+        if (nextSymbol == VAR) return S27;
+        return S_error;
+    case S44: return S_error;
+    case S45: return S_error;
+    case S46: return S_error;
+    case S47: return S_error;
+    case S48: return S_error;
+    case S49: return S_error;
+    case S50: return S_error;
+    case S51: return S_error;
+    case S52: return S_error;
+    case S53: return S_error;
+    case S54: return S_error;
+    case S55: return S_error;
+    case S56: return S_error;
+    case S57: return S_error;
+    case S58: return S_error;
+    case S59: return S_error;
+    case S60: return S_error;
+    case S61: return S_error;
+    case S62:
+        if (nextSymbol == STMT_SEQUENCE) return S64;
+        if (nextSymbol == STATEMENT) return S12;
+        if (nextSymbol == IF_STMT) return S13;
+        if (nextSymbol == REPEAT_STMT) return S14;
+        if (nextSymbol == ASSIGN_STMT) return S15;
+        if (nextSymbol == READ_STMT) return S16;
+        if (nextSymbol == WRITE_STMT) return S17;
+        if (nextSymbol == VAR) return S18;
+        return S_error;
+    case S63: return S_error;
+    case S64: return S_error;
+    case S65: return S_error;
+    }
+}
+// 语法分析器类
+class Parser {};
+
+#endif // PARSER_HPP

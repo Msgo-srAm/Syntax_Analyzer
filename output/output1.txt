@@ -1,0 +1,155 @@
+program -> array_decls stmt_sequence
+stmt_sequence -> stmt_sequence SEMI statement
+statement -> repeat_stmt
+repeat_stmt -> REPEAT stmt_sequence UNTIL exp
+exp -> simple_exp RELOP simple_exp
+simple_exp -> term
+term -> factor
+factor -> NUM
+simple_exp -> term
+term -> factor
+factor -> var
+var -> ID var_dims
+var_dims -> epsilon
+stmt_sequence -> stmt_sequence SEMI statement
+statement -> assign_stmt
+assign_stmt -> var ASSIGN exp
+exp -> simple_exp
+simple_exp -> simple_exp PLUS term
+term -> factor
+factor -> NUM
+simple_exp -> term
+term -> factor
+factor -> var
+var -> ID var_dims
+var_dims -> epsilon
+var -> ID var_dims
+var_dims -> epsilon
+stmt_sequence -> stmt_sequence SEMI statement
+statement -> write_stmt
+write_stmt -> WRITE exp
+exp -> simple_exp
+simple_exp -> term
+term -> factor
+factor -> var
+var -> ID var_dims
+var_dims -> var_dims LBRACKET exp RBRACKET
+exp -> simple_exp
+simple_exp -> term
+term -> factor
+factor -> var
+var -> ID var_dims
+var_dims -> epsilon
+var_dims -> epsilon
+stmt_sequence -> statement
+statement -> assign_stmt
+assign_stmt -> var ASSIGN exp
+exp -> simple_exp
+simple_exp -> simple_exp PLUS term
+term -> factor
+factor -> var
+var -> ID var_dims
+var_dims -> var_dims LBRACKET exp RBRACKET
+exp -> simple_exp
+simple_exp -> simple_exp MINUS term
+term -> factor
+factor -> NUM
+simple_exp -> term
+term -> factor
+factor -> var
+var -> ID var_dims
+var_dims -> epsilon
+var_dims -> epsilon
+simple_exp -> term
+term -> factor
+factor -> var
+var -> ID var_dims
+var_dims -> var_dims LBRACKET exp RBRACKET
+exp -> simple_exp
+simple_exp -> simple_exp MINUS term
+term -> factor
+factor -> NUM
+simple_exp -> term
+term -> factor
+factor -> var
+var -> ID var_dims
+var_dims -> epsilon
+var_dims -> epsilon
+var -> ID var_dims
+var_dims -> var_dims LBRACKET exp RBRACKET
+exp -> simple_exp
+simple_exp -> term
+term -> factor
+factor -> var
+var -> ID var_dims
+var_dims -> epsilon
+var_dims -> epsilon
+stmt_sequence -> stmt_sequence SEMI statement
+statement -> assign_stmt
+assign_stmt -> var ASSIGN exp
+exp -> simple_exp
+simple_exp -> term
+term -> factor
+factor -> NUM
+var -> ID var_dims
+var_dims -> epsilon
+stmt_sequence -> stmt_sequence SEMI statement
+statement -> write_stmt
+write_stmt -> WRITE exp
+exp -> simple_exp
+simple_exp -> term
+term -> factor
+factor -> var
+var -> ID var_dims
+var_dims -> var_dims LBRACKET exp RBRACKET
+exp -> simple_exp
+simple_exp -> term
+term -> factor
+factor -> NUM
+var_dims -> epsilon
+stmt_sequence -> stmt_sequence SEMI statement
+statement -> write_stmt
+write_stmt -> WRITE exp
+exp -> simple_exp
+simple_exp -> term
+term -> factor
+factor -> var
+var -> ID var_dims
+var_dims -> var_dims LBRACKET exp RBRACKET
+exp -> simple_exp
+simple_exp -> term
+term -> factor
+factor -> NUM
+var_dims -> epsilon
+stmt_sequence -> stmt_sequence SEMI statement
+statement -> assign_stmt
+assign_stmt -> var ASSIGN exp
+exp -> simple_exp
+simple_exp -> term
+term -> factor
+factor -> NUM
+var -> ID var_dims
+var_dims -> var_dims LBRACKET exp RBRACKET
+exp -> simple_exp
+simple_exp -> term
+term -> factor
+factor -> NUM
+var_dims -> epsilon
+stmt_sequence -> statement
+statement -> assign_stmt
+assign_stmt -> var ASSIGN exp
+exp -> simple_exp
+simple_exp -> term
+term -> factor
+factor -> NUM
+var -> ID var_dims
+var_dims -> var_dims LBRACKET exp RBRACKET
+exp -> simple_exp
+simple_exp -> term
+term -> factor
+factor -> NUM
+var_dims -> epsilon
+array_decls -> array_decls array_decl
+array_decl -> ARRAY ID dims SEMI
+dims -> LBRACKET NUM RBRACKET
+array_decls -> epsilon
