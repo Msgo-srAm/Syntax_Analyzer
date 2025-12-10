@@ -5,8 +5,8 @@
  * Parser.hpp_oringin中存放的代码是严格按照状态转移表生成的，
  * switch语句下的每一个case都严格实现了对应状态的转移逻辑，而
  * 本文件中基于case语句下的重复，优化了switch下的冗余代码，减
- * 少了代码量，实际二者功能一致，Parser.hpp_oringin能够更好
- * 的和parser.output对应
+ * 少了代码量，实际二者功能一致，但Parser.hpp_oringin能够更
+ * 好地和parser.output对应
  */
 
 #include <iostream>
