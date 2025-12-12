@@ -178,7 +178,7 @@ program'也类似的改成S'(文法增广符号)
 
 最终使用以下文法进行推导
 ![符号简化](./picture/符号简化后文法.jpg)
-caonima，简不简化都化不出来，我受够繁文缛节了，上Bison。
+还是化不出来😅，用Bison了。
 
 linux安装bison
 编写parser.y。
