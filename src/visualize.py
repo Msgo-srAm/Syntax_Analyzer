@@ -2,7 +2,7 @@ import sys
 import os
 import subprocess
 
-def parse_production(line):
+def parse_production(line):   
     parts = line.strip().split('->')
     lhs = parts[0].strip()
     if len(parts) > 1:

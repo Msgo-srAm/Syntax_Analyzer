@@ -1,13 +1,28 @@
+/**
+ * @file Parser.hpp
+ * @brief 语法分析器头文件
+ *
+ * 该文件基于ACTION和GOTO表实现了两个转移函数。
+ * 其中,getParserAction函数处理终结符号输入的状态转移，
+ * getNextState函数处理非终结符号输入的状态转移。
+ * 此外,addRules函数返回对应规则的字符串表示。
+ * 还定义了Parser类,实现了语法分析的整体流程。
+ *
+ * @note
+ * 这里的两个转移函数的switch语句经过优化,合并了许多处理相同的case,
+ * 减少了冗余代码,也因此不太好与`compiler/parser.output`对照,
+ * 我保留了原始版本,存放在`src/Parser.hpp_origin`中,
+ * 以便对照查看,二者实际功能是完全等价的.
+ *
+ * @author srAm-dev
+ * @version 0.1
+ * @date 2025-12-11
+ * @copyright Copyright (c) 2025 srAm-dev
+ * SPDX-License-Identifier: WTFPL
+ * Licensed under the WTFPL.
+ */
 #ifndef PARSER_HPP
 #define PARSER_HPP
-
-/*
- * Parser.hpp_oringin中存放的代码是严格按照状态转移表生成的，
- * switch语句下的每一个case都严格实现了对应状态的转移逻辑，而
- * 本文件中基于case语句下的重复，优化了switch下的冗余代码，减
- * 少了代码量，实际二者功能一致，但Parser.hpp_oringin能够更
- * 好地和parser.output对应
- */
 
 #include <iostream>
 #include <fstream>
@@ -16,7 +31,17 @@
 #include "Symbol.hpp"
 #include "State.hpp"
 
-// 获取动作(下一个输入为终结符号时)
+/**
+ * @brief 获取解析器动作
+ *
+ * 该函数根据当前状态和下一个输入符号(终结符号)返回相应的解析器动作。
+ * 动作类型包括SHIFT(移入), REDUCE(规约), ACCEPT(接受)和ERROR(错误)。
+ * 对应了语法分析器设计中的ACTION表。
+ *
+ * @param currentState 当前状态
+ * @param nextSymbol 下一个输入符号(终结符号)
+ * @return ParserAction 返回对应的解析器动作
+ */
 ParserAction getParserAction(State currentState, Terminal nextSymbol) {
     switch (currentState) {
     case S0: return {ParserAction::REDUCE, 2};
@@ -26,7 +51,6 @@ ParserAction getParserAction(State currentState, Terminal nextSymbol) {
         return {ParserAction::ERROR, -1};
 
     case S2:
-        // State 2: 多种shift
         if (nextSymbol == ARRAY) return {ParserAction::SHIFT, 4};
         if (nextSymbol == ID) return {ParserAction::SHIFT, 5};
         if (nextSymbol == IF) return {ParserAction::SHIFT, 6};
@@ -43,7 +67,6 @@ ParserAction getParserAction(State currentState, Terminal nextSymbol) {
 
     case S5: return {ParserAction::REDUCE, 32};
 
-    // Group A: Expression Starters
     case S6:
     case S9:
     case S22:
@@ -60,7 +83,6 @@ ParserAction getParserAction(State currentState, Terminal nextSymbol) {
         if (nextSymbol == LPAREN) return {ParserAction::SHIFT, 22};
         return {ParserAction::ERROR, -1};
 
-    // Group B: Statement Starters
     case S7:
     case S31:
     case S37:
@@ -205,7 +227,16 @@ ParserAction getParserAction(State currentState, Terminal nextSymbol) {
     return {ParserAction::ERROR, -1};
 }
 
-// 获取跳转(下一个输入为非终结符号时)
+/**
+ * @brief 获取下一个状态
+ *
+ * 该函数根据当前状态和下一个输入符号(非终结符号)返回相应的下一个状态。
+ * 对应了语法分析器设计中的GOTO表。
+ *
+ * @param currentState 当前状态
+ * @param nextSymbol 下一个输入符号(非终结符号)
+ * @return State 返回对应的下一个状态
+ */
 State getNextState(State currentState, NonTerminal nextSymbol) {
     switch (currentState) {
     case S0:
@@ -294,7 +325,16 @@ State getNextState(State currentState, NonTerminal nextSymbol) {
     }
 }
 
-// 返回规则的内容
+/**
+ * @brief 返回对应规则的字符串表示
+ *
+ * 该函数根据规则索引返回对应的产生式规则的字符串表示。
+ * 当程序选择进行某条规约时,可以调用此函数获取该规则的文本形式,
+ * 以便输出到控制台和命令行中。
+ *
+ * @param index 规则索引
+ * @return std::string 返回对应的产生式规则字符串
+ */
 std::string addRules(int index) {
     if (index == 0) return "program' -> program";
     else if (index == 1) return "program -> array_decls stmt_sequence";
@@ -333,14 +373,30 @@ std::string addRules(int index) {
     return "";
 }
 
-// 语法分析器类
+/**
+ * @class Parser
+ * @brief 语法分析器类
+ *
+ * 该类实现了基于LALR分析方法的语法分析器。
+ * 它使用状态栈和规约栈来跟踪分析过程,
+ * 并通过ACTION和GOTO表进行状态转移。
+ */
 class Parser {
 private:
-    int currentSymbol;
-    std::ifstream inputFile;
-    std::vector<std::string> reduceStack;
-    std::vector<State> stateStack;
+    int currentSymbol;                    ///< 当前输入符号索引,可在Symbol.hpp中找到对应
+    std::ifstream inputFile;              ///< 输入文件流
+    std::vector<std::string> reduceStack; ///< 规约栈,存储规约规则的字符串表示
+    std::vector<State> stateStack;        ///< 状态栈,存储当前状态序列
 
+    /**
+     * @brief 获取下一个符号
+     *
+     * 该函数从输入文件中读取下一个符号,
+     * 并将其转换为对应的符号索引存储在currentSymbol中。
+     *
+     * @return true 如果成功读取下一个符号
+     * @return false 如果到达文件末尾或读取失败
+     */
     bool getNextToken() {
         std::string lexeme;
         std::string token;
@@ -355,6 +411,13 @@ private:
     }
 
 public:
+    /**
+     * @brief 构造函数
+     *
+     * 初始化语法分析器,打开输入文件,清空规约栈和状态栈,提前获取第一个符号.
+     *
+     * @param filename 输入文件路径
+     */
     Parser(std::string filename) : currentSymbol(0) {
         inputFile.open(filename, std::ios::in);
         reduceStack.clear();
@@ -362,39 +425,62 @@ public:
         stateStack.push_back(S0);
         getNextToken();
     }
+
+    /**
+     * @brief 析构函数
+     *
+     * 关闭输入文件流.
+     */
     ~Parser() {
         if (inputFile.is_open()) inputFile.close();
     }
 
+    /**
+     * @brief 语法分析主流程
+     *
+     * 该函数实现了LALR语法分析的主循环,
+     * 根据当前状态和输入符号获取解析器动作,
+     * 并执行相应的移入、规约或接受操作。
+     *
+     * @return true 如果成功完成语法分析
+     * @return false 如果遇到语法错误
+     */
     bool parse() {
         while (true) {
             ParserAction action = getParserAction(stateStack.back(), static_cast<Terminal>(currentSymbol));
-            if (action.type == ParserAction::SHIFT) {
+            if (action.type == ParserAction::SHIFT) { // 移入操作,推入新状态
                 stateStack.push_back(static_cast<State>(action.value));
                 getNextToken();
             } else if (action.type == ParserAction::REDUCE) {
-                ProductionRule rule = rules[action.value];
-                for (int i = 0; i < rule.rhsLen; ++i) { stateStack.pop_back(); }
-                reduceStack.push_back(addRules(action.value));
-                State newState = getNextState(stateStack.back(), rule.lhs);
-                stateStack.push_back(newState);
-            } else if (action.type == ParserAction::ACCEPT) {
+                ProductionRule rule = rules[action.value];                       // 从Symbol.hpp中的rules数组获取规则
+                for (int i = 0; i < rule.rhsLen; ++i) { stateStack.pop_back(); } // 从状态栈中弹出对应数量的状态
+                reduceStack.push_back(addRules(action.value));                   // 记录规约步骤
+                State newState = getNextState(stateStack.back(), rule.lhs);      // 获取新状态
+                stateStack.push_back(newState);                                  // 将新状态压入状态栈
+            } else if (action.type == ParserAction::ACCEPT) {                    // 接受状态
                 std::cout << "Parsing completed successfully." << std::endl;
                 return true;
-            } else {
+            } else { // 错误状态
                 std::cout << "Syntax error encountered." << std::endl;
                 return false;
             }
         }
     }
 
+    /**
+     * @brief 输出规约步骤
+     *
+     * 该函数将规约栈中的规约步骤输出到控制台和指定的输出文件中。
+     *
+     * @param outfilename 输出文件路径
+     */
     void printReduceStack(std::string outfilename) {
         std::ofstream outfile;
         outfile.open(outfilename, std::ios::out);
         std::cout << "Reduction Steps:" << std::endl;
         for (int i = reduceStack.size() - 1; i >= 0; --i) {
-            std::cout << reduceStack[i] << std::endl;
-            outfile << reduceStack[i] << std::endl;
+            std::cout << reduceStack[i] << std::endl; // 输出到控制台
+            outfile << reduceStack[i] << std::endl;   // 输出到文件
         }
         outfile.close();
     }

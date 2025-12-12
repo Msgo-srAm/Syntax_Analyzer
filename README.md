@@ -1,5 +1,28 @@
 # 东南大学编译原理课程实验二语法分析器
 
+使用方法
+1.clone项目
+
+    git clone https://github.com/srAm-dev/Syntax_Analyzer.git
+
+2.进入项目目录
+
+    cd Syntax_Analyzer
+
+3.编译项目
+
+    g++ src/main.cpp -o Parser
+
+4.运行程序，输入为`./input/output1.txt`，输入文件为`./output/output1.txt`
+
+    ./Lexer ./input/output1.txt ./output/output1.txt
+
+5.可视化语法树(可选)
+
+    python ./src/visualize.py ./output/output1.txt ./tree/tree1
+
+6.将`./tree/tree1.gv`中内容复制进`https://graph.flyte.org/`网站,可以可视化
+
 ## a) 文法定义
 
 以下是依据词法分析器实验中定义的TOKEN，所定义的文法

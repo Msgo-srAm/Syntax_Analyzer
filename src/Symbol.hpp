@@ -1,9 +1,25 @@
+/**
+ * @file Symbol.hpp
+ * @brief 符号枚举定义
+ * @author srAm-dev
+ * @version 0.1
+ * @date 2025-12-12
+ * @copyright Copyright (c) 2025 srAm-dev
+ * SPDX-License-Identifier: WTFPL
+ * Licensed under the WTFPL.
+ */
 #ifndef SYMBOL_HPP
 #define SYMBOL_HPP
 
 #include <string>
 
-// 终结符，同实验一中的 Token类型（去除了注释和空白字符）
+/**
+ * @enum Terminal
+ * @brief 终结符枚举定义
+ *
+ * 该枚举定义了语法分析器中的所有终结符,
+ * 对应词法分析器输出的Token类型,给出的数值来自于Parser.output文件中.
+ */
 enum Terminal {
     eof = 0,
     ARRAY = 258,
@@ -30,7 +46,13 @@ enum Terminal {
     RPAREN = 279
 };
 
-// 非终结符
+/**
+ * @enum NonTerminal
+ * @brief 非终结符枚举定义
+ *
+ * 该枚举定义了语法分析器中的所有非终结符,
+ * 数值从26开始,同样来自于Parser.output文件.
+ */
 enum NonTerminal {
     PROGRAM = 26,
     ARRAY_DECLS = 27,
@@ -51,7 +73,12 @@ enum NonTerminal {
     VAR_DIMS = 42
 };
 
-// 符号匹配
+/**
+ * @brief 判断字符串是否为终结符
+ * @param inputSymbol 输入字符串
+ * @return true 是终结符
+ * @return false 不是终结符
+ */
 bool isTerminal(std::string inputSymbol) {
     return inputSymbol == "eof" || inputSymbol == "ARRAY" || inputSymbol == "ID" || inputSymbol == "SEMI"
            || inputSymbol == "LBRACKET" || inputSymbol == "NUM" || inputSymbol == "RBRACKET" || inputSymbol == "IF"
@@ -60,6 +87,12 @@ bool isTerminal(std::string inputSymbol) {
            || inputSymbol == "RELOP" || inputSymbol == "PLUS" || inputSymbol == "MINUS" || inputSymbol == "TIMES"
            || inputSymbol == "OVER" || inputSymbol == "LPAREN" || inputSymbol == "RPAREN";
 }
+
+/**
+ * @brief 根据输入字符串返回对应的终结符枚举值
+ * @param inputSymbol 输入字符串
+ * @return Terminal 对应的终结符枚举值
+ */
 Terminal whichTerminal(std::string inputSymbol) {
     if (inputSymbol == "eof") return eof;
     else if (inputSymbol == "ARRAY") return ARRAY;
@@ -87,56 +120,57 @@ Terminal whichTerminal(std::string inputSymbol) {
     // 默认返回ID，实际使用中应确保输入合法
     return ID;
 }
-bool isNonTerminal(std::string inputSymbol) {
-    return inputSymbol == "PROGRAM" || inputSymbol == "ARRAY_DECLS" || inputSymbol == "ARRAY_DECL"
-           || inputSymbol == "DIMS" || inputSymbol == "STMT_SEQUENCE" || inputSymbol == "STATEMENT"
-           || inputSymbol == "IF_STMT" || inputSymbol == "REPEAT_STMT" || inputSymbol == "ASSIGN_STMT"
-           || inputSymbol == "READ_STMT" || inputSymbol == "WRITE_STMT" || inputSymbol == "EXP"
-           || inputSymbol == "SIMPLE_EXP" || inputSymbol == "TERM" || inputSymbol == "FACTOR" || inputSymbol == "VAR"
-           || inputSymbol == "VAR_DIMS";
-}
-NonTerminal whichNonTerminal(std::string inputSymbol) {
-    if (inputSymbol == "PROGRAM") return PROGRAM;
-    else if (inputSymbol == "ARRAY_DECLS") return ARRAY_DECLS;
-    else if (inputSymbol == "ARRAY_DECL") return ARRAY_DECL;
-    else if (inputSymbol == "DIMS") return DIMS;
-    else if (inputSymbol == "STMT_SEQUENCE") return STMT_SEQUENCE;
-    else if (inputSymbol == "STATEMENT") return STATEMENT;
-    else if (inputSymbol == "IF_STMT") return IF_STMT;
-    else if (inputSymbol == "REPEAT_STMT") return REPEAT_STMT;
-    else if (inputSymbol == "ASSIGN_STMT") return ASSIGN_STMT;
-    else if (inputSymbol == "READ_STMT") return READ_STMT;
-    else if (inputSymbol == "WRITE_STMT") return WRITE_STMT;
-    else if (inputSymbol == "EXP") return EXP;
-    else if (inputSymbol == "SIMPLE_EXP") return SIMPLE_EXP;
-    else if (inputSymbol == "TERM") return TERM;
-    else if (inputSymbol == "FACTOR") return FACTOR;
-    else if (inputSymbol == "VAR") return VAR;
-    else if (inputSymbol == "VAR_DIMS") return VAR_DIMS;
-    // 默认返回PROGRAM，实际使用中应确保输入合法
-    return PROGRAM;
-}
+
+/**
+ * @brief 根据输入字符串返回对应的符号索引
+ *
+ * 这里是为了将终结符和非终结符都转化为整形数值,方便语法分析器的调用.
+ * @param inputSymbol 输入字符串
+ * @return int 符号索引
+ */
 int symbolToIndex(std::string inputSymbol) {
     if (isTerminal(inputSymbol)) {
         return whichTerminal(inputSymbol); // 终结符索引从0开始
-    } else if (isNonTerminal(inputSymbol)) {
-        return whichNonTerminal(inputSymbol); // 非终结符索引接在终结符后面
     }
     return -1; // 非法符号
 }
-// 动作结构体
+
+/**
+ * @struct ParserAction
+ * @brief 解析器动作结构体
+ *
+ * 该结构体表示语法分析器中的动作类型及其相关值。
+ * 动作类型包括移入(SHIFT)、规约(REDUCE)、接受(ACCEPT)和错误(ERROR)。
+ *
+ * @note
+ * 对应的值根据动作类型不同含义不同：
+ * - SHIFT: 目标状态
+ * - REDUCE: 规则编号
+ * - ACCEPT/ERROR: 无意义，通常为-1
+ */
 struct ParserAction {
     enum Type { SHIFT, REDUCE, ACCEPT, ERROR } type;
     int value; // SHIFT: 目标状态; REDUCE: 规则编号; ACCEPT/ERROR: 无意义(-1)
 };
 
-// 规则结构体 (用于 Reduce)
+/**
+ * @struct ProductionRule
+ * @brief 规则结构体
+ *
+ * 该结构体表示语法分析器中的产生式规则。
+ * 包含左部非终结符和右部长度（即需要弹出的符号数量）。
+ */
 struct ProductionRule {
     NonTerminal lhs; // 左部非终结符
     int rhsLen;      // 右部长度 (要弹出的数量)
 };
 
-// 规则表
+/**
+ * @brief 产生式规则表
+ *
+ * 该数组包含语法分析器中所有的产生式规则。
+ * 每条规则由左部非终结符和右部长度组成，用于语法分析过程中的规约操作。
+ */
 const ProductionRule rules[34] = {
     {PROGRAM, 1},       // Rule 0:  $accept (占位)
     {PROGRAM, 2},       // Rule 1:  program: array_decls stmt_sequence

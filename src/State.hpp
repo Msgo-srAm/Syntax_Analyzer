@@ -1,6 +1,24 @@
+/**
+ * @file State.hpp
+ * @brief 状态枚举定义
+ * @author srAm-dev
+ * @version 0.1
+ * @date 2025-12-11
+ * @copyright Copyright (c) 2025 srAm-dev
+ * SPDX-License-Identifier: WTFPL
+ * Licensed under the WTFPL.
+ */
 #ifndef STATE_HPP
 #define STATE_HPP
 
+/**
+ * @brief 状态枚举定义
+ *
+ * 该枚举定义了语法分析器中的所有状态,
+ * 用于表示LALR分析表中的状态编号,对应Parser.output中的状态。
+ *
+ * @note 其中S_error表示错误状态。
+ */
 enum State {
     S_error = -1,
     S0 = 0,
