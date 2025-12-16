@@ -178,7 +178,7 @@ program'也类似的改成S'(文法增广符号)
 
 最终使用以下文法进行推导
 ![符号简化](./picture/符号简化后文法.jpg)
-还是化不出来😅，用Bison了。
+还是化不出来😅，只能用Bison了。
 
 linux安装bison
 编写parser.y。
@@ -189,8 +189,7 @@ linux安装bison
     sudo apt-get install graphviz -y
     bison -g parser.y
     dot -Tpdf parser.gv -o parser.pdf
-    dot -Tpng parser.gv -o parser.png
 结果如图
-![分析表](./compiler/parser.png)
+![分析表](./compiler/graphviz.svg)
 
 ## d)依据分析表编写代码

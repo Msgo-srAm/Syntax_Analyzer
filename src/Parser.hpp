@@ -11,7 +11,7 @@
  * @note
  * 这里的两个转移函数的switch语句经过优化,合并了许多处理相同的case,
  * 减少了冗余代码,也因此不太好与`compiler/parser.output`对照,
- * 我保留了原始版本,存放在`src/Parser.hpp_origin`中,
+ * 也保留了原始版本,存放在`src/Parser.hpp_origin`中,
  * 以便对照查看,二者实际功能是完全等价的.
  *
  * @author srAm-dev
